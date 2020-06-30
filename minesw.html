@@ -16,20 +16,20 @@ let status = document.getElementById('status');
 status.addEventListener('click', init)
 
 
-let board = new Array(rows);
+let b = new Array(rows);
 let imgg = new Array(rows);
-let tile = new Array(rows);
+let t = new Array(rows);
 for (let i = 0; i < rows; i++) {
-  board[i] = new Array(columns);
+  b[i] = new Array(columns);
   imgg[i] = new Array(columns);
-  tile[i] = new Array(columns)
+  t[i] = new Array(columns)
 }
  
 init();
  
 function check(row, column) {
   if (column >= 0 && row >= 0 && column < columns && row < rows)
-    return board[row][column];
+    return b[row][column];
 }
  
 function init() {
@@ -40,16 +40,16 @@ function init() {
   for (let row = 0; row < rows; row++)
     for (let column = 0; column < columns; column++) {
       let index = row * columns + column;
-      tile[row][column] = document.createElement('img');
-      tile[row][column].src = 'images/hidden.png';
-      tile[row][column].style = 'position:absolute;height:30px; width: 30px';
-      tile[row][column].style.top = 150 + row * 30;
-      tile[row][column].style.left = 50 + column * 30;
-      tile[row][column].addEventListener('mousedown', click);
-      tile[row][column].id = index;
-      document.body.appendChild(tile[row][column]);
+      t[row][column] = document.createElement('img');
+      t[row][column].src = 'images/hidden.png';
+      t[row][column].style = 'position:absolute;height:30px; width: 30px';
+      t[row][column].style.top = 150 + row * 30;
+      t[row][column].style.left = 50 + column * 30;
+      t[row][column].addEventListener('mousedown', click);
+      t[row][column].id = index;
+      document.body.appendChild(t[row][column]);
       imgg[row][column] = 'hidden';
-      board[row][column] = '';
+      b[row][column] = '';
     }
  
   let placed = 0;
@@ -57,8 +57,8 @@ function init() {
     let column = Math.floor(Math.random() * columns);
     let row = Math.floor(Math.random() * rows);
  
-    if (board[row][column] != 'mine') {
-      board[row][column] = 'mine';
+    if (b[row][column] != 'mine') {
+      b[row][column] = 'mine';
       placed++;
     }
   } 
@@ -66,7 +66,7 @@ function init() {
   for (let column = 0; column < columns; column++)
     for (let row = 0; row < rows; row++) {
       if (check(row, column) != 'mine') {
-        board[row][column] =
+        b[row][column] =
           ((check(row + 1, column) == 'mine') | 0) +
           ((check(row + 1, column - 1) == 'mine') | 0) +
           ((check(row + 1, column + 1) == 'mine') | 0) +
@@ -88,12 +88,12 @@ function click(event) {
   if (event.which == 3) {
     switch (imgg[row][column]) {
       case 'hidden':
-        tile[row][column].src = 'images/flag.png';
+        t[row][column].src = 'images/flag.png';
         remaining--;
         imgg[row][column] = 'flag';
         break;
       case 'flag':
-      tile[row][column].src = 'images/hidden.png';
+      t[row][column].src = 'images/hidden.png';
         imgg[row][column] = 'hidden';
         break;
      
@@ -103,14 +103,14 @@ function click(event) {
   status.innerHTML = 'Mines remaining: ' +minesnumleft;
  
   if (event.which == 1 && imgg[row][column] != 'flag') {
-    if (board[row][column] == 'mine') {
+    if (b[row][column] == 'mine') {
       for (let row = 0; row < rows; row++)
         for (let column = 0; column < columns; column++) {
-          if (board[row][column] == 'mine') {
-            tile[row][column].src = 'images/mine.png';
+          if (b[row][column] == 'mine') {
+            t[row][column].src = 'images/mine.png';
           }
-          if (board[row][column] != 'mine' && imgg[row][column] == 'flag') {
-            tile[row][column].src = 'images/misplaced.png';
+          if (b[row][column] != 'mine' && imgg[row][column] == 'flag') {
+            t[row][column].src = 'images/misplaced.png';
           }
         }
         alert("YOU LOOSE :( !!" );
@@ -125,12 +125,12 @@ function click(event) {
 }
  
 function reveal(row, column) {
-  tile[row][column].src = board[row][column] + '.png';
-  if (board[row][column] != 'mine' && imgg[row][column] == 'hidden')
+  t[row][column].src = b[row][column] + '.png';
+  if (b[row][column] != 'mine' && imgg[row][column] == 'hidden')
     revealed++;
-  imgg[row][column] = board[row][column];
+  imgg[row][column] = b[row][column];
  
-  if (board[row][column] == 0) {
+  if (b[row][column] == 0) {
     if (column > 0 && imgg[row][column - 1] == 'hidden') reveal(row, column - 1);
     if (column < (columns - 1) && imgg[row][+column + 1] == 'hidden') reveal(row, +column + 1);
     if (row < (rows - 1) && imgg[+row + 1][column] == 'hidden') reveal(+row + 1, column);
